@@ -71,7 +71,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "elearning_platform.wsgi.application"
+# WSGI_APPLICATION = "elearning_platform.wsgi.application"
+ASGI_APPLICATION = 'elearning_platform.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 
 # Database
