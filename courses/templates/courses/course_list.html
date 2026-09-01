@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-8">
+        <h2 class="mb-4">Available Courses</h2>
+        {% for course in courses %}
+            <div class="card mb-3 shadow-sm border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Taught by {{ course.teacher.username }}</h6>
+                    <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                    <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No courses available right now.</p>
+        {% endfor %}
+    </div>
+
+    {% if user.is_teacher %}
+    <div class="col-md-4">
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white">Create a New Course</div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success w-100">Create Course</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
