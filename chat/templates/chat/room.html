@@ -33,8 +33,11 @@
 <script>
     const otherUserId = JSON.parse(document.getElementById('other-user-id').textContent);
     const currentUsername = JSON.parse(document.getElementById('current-username').textContent);
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
 
-    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + otherUserId + '/');
+    const chatSocket = new WebSocket(
+    wsScheme + '://' + window.location.host + '/ws/chat/{{ room_name }}/'
+);
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);

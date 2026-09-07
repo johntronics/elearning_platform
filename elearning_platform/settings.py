@@ -160,7 +160,7 @@ REST_FRAMEWORK = {
 }
 
 # drop emails to the terminal
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'noreply@elearning.com'
 
 # Celery Config
