@@ -4,7 +4,10 @@
 <div class="row mt-4">
     <div class="col-md-12 mb-4">
         <h2>{{ course.title }}</h2>
-        <p class="text-muted">Instructor: {{ course.teacher.username }}</p>
+        <p class="text-muted">
+    Instructor: {{ course.teacher.username }} 
+    <a href="{% url 'chat_room' course.teacher.id %}" class="btn btn-sm btn-outline-primary ms-2">Message Teacher</a>
+</p>
         <p class="lead">{{ course.description }}</p>
 
         {% if user.is_student %}
