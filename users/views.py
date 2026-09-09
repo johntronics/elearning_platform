@@ -1,24 +1,39 @@
 from django.shortcuts import render, redirect
-
-# Create your views here.
-
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from .models import StatusUpdate, User
+from chat.models import Message  
 
 @login_required
 def dashboard(request):
-    # Handle submitting a new status update
+    
     if request.method == 'POST':
         content = request.POST.get('content')
         if content:
             StatusUpdate.objects.create(user=request.user, content=content)
             return redirect('dashboard')
 
-    # Fetch status updates for the feed
+    
     updates = StatusUpdate.objects.all().order_by('-created_at')
     
+    
+    
+    chat_history = Message.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user)
+    ).order_by('-timestamp')
+    
+    
+    recent_chats = []
+    seen_users = set()
+    for msg in chat_history:
+        other_user = msg.sender if msg.receiver == request.user else msg.receiver
+        if other_user not in seen_users:
+            seen_users.add(other_user)
+            recent_chats.append(other_user)
+            
     context = {
         'updates': updates,
-        'user': request.user
+        'user': request.user,
+        'recent_chats': recent_chats  
     }
     return render(request, 'users/dashboard.html', context)

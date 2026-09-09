@@ -6,7 +6,10 @@
         <h2>{{ course.title }}</h2>
         <p class="text-muted">
     Instructor: {{ course.teacher.username }} 
-    <a href="{% url 'chat_room' course.teacher.id %}" class="btn btn-sm btn-outline-primary ms-2">Message Teacher</a>
+    
+    {% if request.user != course.teacher %}
+        <a href="{% url 'chat_room' course.teacher.id %}" class="btn btn-sm btn-outline-primary ms-2">Message Teacher</a>
+    {% endif %}
 </p>
         <p class="lead">{{ course.description }}</p>
 
@@ -37,6 +40,24 @@
             {% endfor %}
         </ul>
     </div>
+{% if request.user == course.teacher %}
+    <div class="card shadow-sm mt-3 border-primary">
+        <div class="card-body">
+            <h6 class="card-title">Upload New Material</h6>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-2">
+                    <input type="text" name="title" class="form-control" placeholder="Material Title (e.g., Syllabus)" required>
+                </div>
+                <div class="mb-3">
+                    <input type="file" name="file" class="form-control" required>
+                </div>
+                <input type="hidden" name="action" value="upload_material">
+                <button type="submit" class="btn btn-primary btn-sm">Upload Material</button>
+            </form>
+        </div>
+    </div>
+{% endif %}
 
     <div class="col-md-6">
         <h4 class="mb-3">Student Feedback</h4>

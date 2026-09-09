@@ -9,11 +9,14 @@ User = get_user_model()
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope['user'].id
-        self.other_user_id = self.scope['url_route']['kwargs']['user_id']
         
-        # Sort the IDs for me to ensure both users join the exact same room string
-        ids = sorted([int(self.user_id), int(self.other_user_id)])
-        self.room_group_name = f"chat_{ids[0]}_{ids[1]}"
+
+        self.room_group_name = self.scope['url_route']['kwargs']['room_name']
+        
+
+        parts = self.room_group_name.split('_')
+        id1, id2 = int(parts[1]), int(parts[2])
+        self.other_user_id = id2 if self.user_id == id1 else id1
 
         # Join room group
         await self.channel_layer.group_add(
@@ -34,7 +37,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
-        # Save message to database asynchronously
+        # Save message to database
         await self.save_message(self.user_id, self.other_user_id, message)
 
         # Send message to room group

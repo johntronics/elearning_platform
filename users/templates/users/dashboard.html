@@ -16,9 +16,11 @@
             <p>No status updates yet. Be the first to post!</p>
         {% endfor %}
     </div>
-    <!-- Post Update Box -->
+
     <div class="col-md-4">
-        <div class="card shadow-sm border-primary">
+        
+        <!-- Post Update Box -->
+        <div class="card shadow-sm border-primary mb-4">
             <div class="card-body">
                 <h5 class="card-title">Post an Update</h5>
                 <form method="POST">
@@ -28,6 +30,25 @@
                 </form>
             </div>
         </div>
+
+     
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">Recent Chats</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for chat_user in recent_chats %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ chat_user.username }}
+                            <a href="{% url 'chat_room' chat_user.id %}" class="btn btn-sm btn-outline-info">Open</a>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted text-center py-3">No recent messages.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
     </div>
-</div>
 {% endblock %}
