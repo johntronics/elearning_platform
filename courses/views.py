@@ -33,27 +33,32 @@ def course_detail(request, course_id):
     is_enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
     
     if request.method == 'POST':
-        
+        # 1. Handle Enrollment
         if 'enroll' in request.POST:
             if request.user.is_student and not is_enrolled:
                 Enrollment.objects.create(student=request.user, course=course)
                 messages.success(request, "Successfully enrolled!")
                 return redirect('course_detail', course_id=course.id)
                 
-        
+        # 2. Handle Material Upload
         elif request.POST.get('action') == 'upload_material':
             if request.user == course.teacher:
                 title = request.POST.get('title')
                 uploaded_file = request.FILES.get('file') 
                 
                 if title and uploaded_file:
-                    
                     material = Material.objects.create(course=course, title=title, file=uploaded_file)
                     messages.success(request, "Material uploaded successfully!")
-                    
-                    
                     notify_students_new_material.delay(course.id, material.title)
-                    
+                    return redirect('course_detail', course_id=course.id)
+
+        # 3. Handle Student Feedback
+        elif request.POST.get('action') == 'submit_feedback':
+            if request.user.is_student and is_enrolled:
+                comment_text = request.POST.get('comment')
+                if comment_text:
+                    Feedback.objects.create(course=course, student=request.user, comment=comment_text)
+                    messages.success(request, "Thank you for your feedback!")
                     return redirect('course_detail', course_id=course.id)
 
     context = {

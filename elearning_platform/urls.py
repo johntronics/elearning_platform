@@ -50,3 +50,6 @@ urlpatterns = [
     path('chat/<int:user_id>/', chat_room, name='chat_room'),
     path('courses/', include('courses.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

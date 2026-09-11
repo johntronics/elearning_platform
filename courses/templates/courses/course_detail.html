@@ -27,9 +27,10 @@
 </div>
 
 <div class="row">
+    
     <div class="col-md-6">
         <h4 class="mb-3">Course Materials</h4>
-        <ul class="list-group">
+        <ul class="list-group mb-3">
             {% for material in materials %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     {{ material.title }}
@@ -39,38 +40,58 @@
                 <li class="list-group-item text-muted">No materials uploaded yet.</li>
             {% endfor %}
         </ul>
-    </div>
-{% if request.user == course.teacher %}
-    <div class="card shadow-sm mt-3 border-primary">
-        <div class="card-body">
-            <h6 class="card-title">Upload New Material</h6>
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="mb-2">
-                    <input type="text" name="title" class="form-control" placeholder="Material Title (e.g., Syllabus)" required>
-                </div>
-                <div class="mb-3">
-                    <input type="file" name="file" class="form-control" required>
-                </div>
-                <input type="hidden" name="action" value="upload_material">
-                <button type="submit" class="btn btn-primary btn-sm">Upload Material</button>
-            </form>
-        </div>
-    </div>
-{% endif %}
 
+        
+        {% if request.user == course.teacher %}
+            <div class="card shadow-sm border-primary">
+                <div class="card-body">
+                    <h6 class="card-title">Upload New Material</h6>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <input type="text" name="title" class="form-control" placeholder="Material Title (e.g., Syllabus)" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="file" name="file" class="form-control" required>
+                        </div>
+                        <input type="hidden" name="action" value="upload_material">
+                        <button type="submit" class="btn btn-primary btn-sm">Upload Material</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    
     <div class="col-md-6">
         <h4 class="mb-3">Student Feedback</h4>
-        <div class="bg-light p-3 rounded border">
+        <div class="bg-light p-3 rounded border mb-3">
             {% for feedback in feedbacks %}
                 <div class="mb-2 border-bottom pb-2">
                     <strong>{{ feedback.student.username }}</strong> said:
                     <p class="mb-0 text-muted">{{ feedback.comment }}</p>
                 </div>
             {% empty %}
-                <p>No feedback provided yet.</p>
+                <p class="text-muted">No feedback provided yet.</p>
             {% endfor %}
         </div>
+
+        
+        {% if request.user.is_student and is_enrolled %}
+            <div class="card shadow-sm border-success">
+                <div class="card-body">
+                    <h6 class="card-title">Leave Feedback</h6>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <textarea name="comment" class="form-control" rows="2" placeholder="What did you think of this course?" required></textarea>
+                        </div>
+                        <input type="hidden" name="action" value="submit_feedback">
+                        <button type="submit" class="btn btn-success btn-sm">Submit</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
