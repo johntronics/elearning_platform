@@ -23,6 +23,8 @@ from django.contrib.auth import views as auth_views
 # API ViewSets
 from users.api import UserViewSet, StatusUpdateViewSet
 from courses.api import CourseViewSet
+from django.conf import settings
+from django.conf.urls.static import static
 
 # Web Views
 from users.views import dashboard
